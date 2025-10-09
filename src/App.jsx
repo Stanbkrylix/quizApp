@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Link,
     BrowserRouter,
@@ -26,6 +26,12 @@ function App() {
 function AppContent() {
     const location = useLocation();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (location.pathname !== "/") {
+            navigate("/", { replace: true });
+        }
+    }, []);
 
     return (
         <div className="app-content">
