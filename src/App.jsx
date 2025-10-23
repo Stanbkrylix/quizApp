@@ -37,7 +37,9 @@ function AppContent() {
     }, []);
 
     function moveForward() {
+        if (Data.length - 1 === shiftIndex) return;
         setShiftIndex(shiftIndex + 1);
+        console.log(shiftIndex);
     }
 
     function moveBackward() {
@@ -94,15 +96,51 @@ function DashBoard() {
     );
 }
 function Review({ Data, moveForward, moveBackward, shiftIndex }) {
+    const [isVisible, setIsVisible] = useState(false);
+    const Letters = ["A", "B", "C", "D"];
+
+    function toggleIsVisible() {
+        setIsVisible(!isVisible);
+    }
+
     return (
         <div className="review-div">
             <h1>This is the Review page</h1>
             <div className="review-content">
-                <p className="question-p">Question</p>
-                <p className="answer-p">Answer</p>
+                <h2 className="category-h2">
+                    Category: {Data[shiftIndex]?.category}
+                </h2>
+                <p className="question-p">Q: {Data[shiftIndex]?.question}</p>
+                <div className="answers-div">
+                    {Data[shiftIndex]?.options.map((item, id) => (
+                        <p className="answer-option" key={id}>
+                            <span>{Letters[id]}</span>
+                            <span>{item}</span>
+                        </p>
+                    ))}
+                </div>
+                <p className="answer-p" onClick={toggleIsVisible}>
+                    {isVisible ? Data[shiftIndex]?.answer : "Click For Answer"}
+                </p>
                 <div className="shifting-btn">
-                    <button className="back-btn">Back</button>
-                    <button className="next-btn">Next</button>
+                    <button
+                        className="back-btn"
+                        onClick={() => {
+                            moveBackward();
+                            setIsVisible(false);
+                        }}
+                    >
+                        Back
+                    </button>
+                    <button
+                        className="next-btn"
+                        onClick={() => {
+                            moveForward();
+                            setIsVisible(false);
+                        }}
+                    >
+                        Next
+                    </button>
                 </div>
             </div>
         </div>

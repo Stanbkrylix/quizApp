@@ -4,3 +4,35 @@
     padding: 2rem;
     text-align: center;
 }
+
+.review-content {
+    border: 1px solid white;
+    padding: 0.5rem;
+    font-size: 1.3rem;
+}
+.answer-p {
+    font-size: 1.4rem;
+    border: 1px solid white;
+    width: 50%;
+    margin: 0 auto;
+    cursor: pointer;
+}
+
+.answers-div {
+    /* width: 50%; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 0.4rem;
+}
+.answer-option {
+    width: 50%;
+    margin: 0 auto;
+    /* padding: ; */
+    display: flex;
+    /* justify-content: center; */
+    /* align-items: center; */
+    gap: 0.5rem;
+}
