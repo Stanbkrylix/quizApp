@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { MockData } from "./MockData";
 import {
     Link,
     BrowserRouter,
@@ -12,8 +13,6 @@ import {
 import "./App.css";
 
 function App() {
-    const [count, setCount] = useState(0);
-
     return (
         <>
             <BrowserRouter>
@@ -24,14 +23,27 @@ function App() {
 }
 
 function AppContent() {
+    const [Data, setData] = useState(MockData);
+    const [shiftIndex, setShiftIndex] = useState(0);
+
     const location = useLocation();
     const navigate = useNavigate();
 
+    // when load to make page return to Dashboard
     useEffect(() => {
         if (location.pathname !== "/") {
             navigate("/", { replace: true });
         }
     }, []);
+
+    function moveForward() {
+        setShiftIndex(shiftIndex + 1);
+    }
+
+    function moveBackward() {
+        if (shiftIndex === 0) return;
+        setShiftIndex(shiftIndex - 1);
+    }
 
     return (
         <div className="app-content">
@@ -40,8 +52,18 @@ function AppContent() {
             <div className="content-side">
                 <Routes>
                     <Route path="/" element={<DashBoard />} />
-                    <Route path="/review" element={<Review />} />
-                    <Route path="/quiz" element={<Quiz />} />
+                    <Route
+                        path="/review"
+                        element={
+                            <Review
+                                Data={Data}
+                                moveForward={moveForward}
+                                moveBackward={moveBackward}
+                                shiftIndex={shiftIndex}
+                            />
+                        }
+                    />
+                    <Route path="/quiz" element={<Quiz Data={Data} />} />
                 </Routes>
             </div>
         </div>
@@ -71,14 +93,22 @@ function DashBoard() {
         </div>
     );
 }
-function Review() {
+function Review({ Data, moveForward, moveBackward, shiftIndex }) {
     return (
         <div className="review-div">
             <h1>This is the Review page</h1>
+            <div className="review-content">
+                <p className="question-p">Question</p>
+                <p className="answer-p">Answer</p>
+                <div className="shifting-btn">
+                    <button className="back-btn">Back</button>
+                    <button className="next-btn">Next</button>
+                </div>
+            </div>
         </div>
     );
 }
-function Quiz() {
+function Quiz({ Data }) {
     return (
         <div className="quiz-div">
             <h1>This is the Quiz page</h1>
