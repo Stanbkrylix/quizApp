@@ -5,34 +5,44 @@
     text-align: center;
 }
 
-.review-content {
+/* .quiz-section */
+
+.name-of-quiz-div {
     border: 1px solid white;
-    padding: 0.5rem;
-    font-size: 1.3rem;
-}
-.answer-p {
-    font-size: 1.4rem;
-    border: 1px solid white;
-    width: 50%;
-    margin: 0 auto;
-    cursor: pointer;
+    display: flex;
+    /* justify-content: space-around; */
+    align-items: center;
+    gap: 1rem;
+    /* padding: 1em; */
 }
 
-.answers-div {
-    /* width: 50%; */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 1rem;
-    gap: 0.4rem;
+.review-question {
+    text-align: start;
 }
-.answer-option {
-    width: 50%;
-    margin: 0 auto;
-    /* padding: ; */
-    display: flex;
-    /* justify-content: center; */
-    /* align-items: center; */
-    gap: 0.5rem;
+.review-choices {
+    list-style-position: inside;
+    text-align: start;
+    padding-left: 0;
+    margin-left: 0;
+}
+/* list */
+.review-choice {
+}
+.review-answer:hover {
+    cursor: pointer;
+    transform: scale(1.01);
+    transition: 250ms;
+}
+
+.prev-next-btns {
+    margin-bottom: 1.5rem;
+}
+.prev-btn {
+    margin-right: 0.6rem;
+}
+.prev-btn,
+.next-btn {
+    font-size: 1rem;
+    padding: 0.5rem;
+    cursor: pointer;
 }

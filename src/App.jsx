@@ -1,157 +1,165 @@
-import { useEffect, useState } from "react";
-import { MockData } from "./MockData";
 import {
-    Link,
     BrowserRouter,
-    Route,
     Routes,
-    useParams,
-    useLocation,
+    Route,
+    Link,
     useNavigate,
+    useParams,
 } from "react-router-dom";
+import { MockData } from "./MockData.js";
+import { use, useState } from "react";
 
-import "./App.css";
+export default function App() {
+    const [reviewState, setReviewState] = useState(false);
+    const [quizState, setQuizState] = useState(false);
 
-function App() {
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/quiz/:id" element={<Quiz />} />
+                <Route path="/review/:id" element={<Review />} />
+            </Routes>
+        </BrowserRouter>
+    );
+}
+
+function Home() {
     return (
         <>
-            <BrowserRouter>
-                <AppContent />
-            </BrowserRouter>
+            <div>
+                <h1>Home</h1>
+                <div className="quiz-div">
+                    <h2>Quiz Section</h2>
+                    <div className="quiz-section">
+                        {MockData.map((data) => (
+                            <QuizSubject key={data.id} quiz={data} />
+                        ))}
+                    </div>
+                </div>
+            </div>
         </>
     );
 }
 
-function AppContent() {
-    const [Data, setData] = useState(MockData);
-    const [shiftIndex, setShiftIndex] = useState(0);
+function QuizSubject({ quiz }) {
+    return (
+        <>
+            <div className="name-of-quiz-div">
+                <p className="name-of-quiz-p">{quiz.subject}</p>
+                <Link to={`/quiz/${quiz.id}`}>Quiz</Link>
+                <Link to={`/review/${quiz.id}`}>Review</Link>
+            </div>
+        </>
+    );
+}
 
-    const location = useLocation();
-    const navigate = useNavigate();
+function Quiz() {
+    const { id } = useParams();
+    const currentQuiz = MockData.find((quiz) => quiz.id === Number(id));
+    return (
+        <>
+            <div className="quiz">
+                <h1>{currentQuiz.subject} Quiz</h1>
+                <Link to={"/"}>Back Home</Link>
+            </div>
+        </>
+    );
+}
 
-    // when load to make page return to Dashboard
-    useEffect(() => {
-        if (location.pathname !== "/") {
-            navigate("/", { replace: true });
+function Review() {
+    const { id } = useParams();
+    const reviewObject = MockData.find((data) => data.id === Number(id));
+    const optionSelection = ["A", "B", "C", "D"];
+
+    const [revealAnswer, setRevealAnswer] = useState(false);
+    const [currentQuestion, setCurrentQuestion] = useState(0);
+    const [isBtnDisabled, setIsBtnDisabled] = useState(false);
+
+    if (!reviewObject) {
+        return <p>Review Not Found</p>;
+    }
+
+    const { data } = reviewObject;
+
+    function toNextQuestion() {
+        if (currentQuestion === data.length - 1) {
+            return;
         }
-    }, []);
-
-    function moveForward() {
-        if (Data.length - 1 === shiftIndex) return;
-        setShiftIndex(shiftIndex + 1);
-        console.log(shiftIndex);
+        setCurrentQuestion(currentQuestion + 1);
+        setRevealAnswer(false);
     }
 
-    function moveBackward() {
-        if (shiftIndex === 0) return;
-        setShiftIndex(shiftIndex - 1);
+    function toPrevQuestion() {
+        if (currentQuestion === 0) return;
+        setCurrentQuestion(currentQuestion - 1);
+        setRevealAnswer(false);
     }
 
+    const question = data[currentQuestion];
     return (
-        <div className="app-content">
-            <Menu />
-
-            <div className="content-side">
-                <Routes>
-                    <Route path="/" element={<DashBoard />} />
-                    <Route
-                        path="/review"
-                        element={
-                            <Review
-                                Data={Data}
-                                moveForward={moveForward}
-                                moveBackward={moveBackward}
-                                shiftIndex={shiftIndex}
-                            />
-                        }
-                    />
-                    <Route path="/quiz" element={<Quiz Data={Data} />} />
-                </Routes>
-            </div>
-        </div>
-    );
-}
-
-function Menu() {
-    return (
-        <div className="menu-section">
-            <Link to={"/"}>
-                <h2>Dashboard</h2>
-            </Link>
-            <Link to={"/review"}>
-                <h2>Review</h2>
-            </Link>
-            <Link to={"/quiz"}>
-                <h2>Quiz</h2>
-            </Link>
-        </div>
-    );
-}
-
-function DashBoard() {
-    return (
-        <div className="dashboard-div">
-            <h1>This is the Dashboard page</h1>
-        </div>
-    );
-}
-function Review({ Data, moveForward, moveBackward, shiftIndex }) {
-    const [isVisible, setIsVisible] = useState(false);
-    const Letters = ["A", "B", "C", "D"];
-
-    function toggleIsVisible() {
-        setIsVisible(!isVisible);
-    }
-
-    return (
-        <div className="review-div">
-            <h1>This is the Review page</h1>
-            <div className="review-content">
-                <h2 className="category-h2">
-                    Category: {Data[shiftIndex]?.category}
-                </h2>
-                <p className="question-p">Q: {Data[shiftIndex]?.question}</p>
-                <div className="answers-div">
-                    {Data[shiftIndex]?.options.map((item, id) => (
-                        <p className="answer-option" key={id}>
-                            <span>{Letters[id]}</span>
-                            <span>{item}</span>
-                        </p>
-                    ))}
+        <>
+            <div>
+                <h1>{reviewObject.subject} Quiz</h1>
+                <div className="review-box">
+                    {data.length === 0 ? (
+                        <h2>No Review exist yet</h2>
+                    ) : (
+                        <>
+                            <h2 className="review-question">
+                                {question.question}
+                            </h2>
+                            <div className="review-options">
+                                <ul className="review-choices">
+                                    {question.options.map((op, index) => (
+                                        <li
+                                            key={index}
+                                            className="review-choice"
+                                        >
+                                            <span>
+                                                {optionSelection[index]}
+                                            </span>
+                                            {". "}
+                                            <span>{op}</span>{" "}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <h2
+                                className="review-answer"
+                                style={{ textAlign: "start" }}
+                                onClick={() =>
+                                    setRevealAnswer((reveal) => !reveal)
+                                }
+                            >
+                                {revealAnswer
+                                    ? `${question.answer}`
+                                    : "Reveal Answer??"}
+                            </h2>
+                            <div className="prev-next-btns">
+                                <button
+                                    disabled={currentQuestion === 0}
+                                    className="prev-btn"
+                                    onClick={toPrevQuestion}
+                                >
+                                    {" "}
+                                    {"<"}{" "}
+                                </button>
+                                <button
+                                    disabled={
+                                        currentQuestion === data.length - 1
+                                    }
+                                    className="next-btn"
+                                    onClick={toNextQuestion}
+                                >
+                                    {">"}
+                                </button>
+                            </div>
+                        </>
+                    )}
                 </div>
-                <p className="answer-p" onClick={toggleIsVisible}>
-                    {isVisible ? Data[shiftIndex]?.answer : "Click For Answer"}
-                </p>
-                <div className="shifting-btn">
-                    <button
-                        className="back-btn"
-                        onClick={() => {
-                            moveBackward();
-                            setIsVisible(false);
-                        }}
-                    >
-                        Back
-                    </button>
-                    <button
-                        className="next-btn"
-                        onClick={() => {
-                            moveForward();
-                            setIsVisible(false);
-                        }}
-                    >
-                        Next
-                    </button>
-                </div>
+                <Link to={"/"}>Back Home</Link>
             </div>
-        </div>
+        </>
     );
 }
-function Quiz({ Data }) {
-    return (
-        <div className="quiz-div">
-            <h1>This is the Quiz page</h1>
-        </div>
-    );
-}
-
-export default App;
