@@ -57,10 +57,40 @@ function QuizSubject({ quiz }) {
 function Quiz() {
     const { id } = useParams();
     const currentQuiz = MockData.find((quiz) => quiz.id === Number(id));
+    const [currentQuizInd, setCurrentQuizInd] = useState(0);
+    const { data } = currentQuiz;
+    const quizData = { ...data };
+    const selectedQuiz = quizData[currentQuizInd];
+    const [selectedValue, setSelectedValue] = useState(null);
+
     return (
         <>
             <div className="quiz">
-                <h1>{currentQuiz.subject} Quiz</h1>
+                <h1>{currentQuiz?.subject} Quiz</h1>
+                <div className="quiz-box-div">
+                    <h2 className="quiz-question">{selectedQuiz?.question}</h2>
+                    <div className="quiz-options-div">
+                        <ul className="quiz-options-lists">
+                            {selectedQuiz?.options.map((op, ind) => (
+                                <li key={ind}>
+                                    <label htmlFor={op}>
+                                        <input
+                                            type="radio"
+                                            name={selectedQuiz?.id}
+                                            value={op}
+                                            checked={selectedValue === op}
+                                            onChange={() =>
+                                                setSelectedValue(op)
+                                            }
+                                        />
+                                        {op}
+                                    </label>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    {}
+                </div>
                 <Link to={"/"}>Back Home</Link>
             </div>
         </>
